@@ -1,9 +1,16 @@
-#include <stdio.h>
+#include "brick.h"
+#include "balle.h"
 
 int main(void){
-  int x;
-  printf("Enter a number: ");
-  scanf("%d", &x);
-  printf("Your number is : %d \n", x);
+  sBrick brick;
+  brick = initBrick(10, 10, 10, 5);
+  displayBrick(brick);
+  remBrick(brick);
+  sBalle balle;
+  balle = initBalle(0, 0, 5, 10, 0);
+  addDegre(balle, 0.26);
+  move(balle);
+  displayBalle(balle);
+  remBalle(balle);
   return 0;
 }
