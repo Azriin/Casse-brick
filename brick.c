@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include "brick.h"
 
-struct Brick{
-    int x;
-    int y;
-    int width;
-    int height;
-};
 
 void displayBrick(sBrick brick){
     printf("Brick info:\n"); 
@@ -17,19 +11,47 @@ void displayBrick(sBrick brick){
     printf("Height = %d\n", brick -> height);
 }
 
-sBrick initBrick(int x, int y, int w, int h){
-    sBrick brick;
-    brick = malloc(sizeof(sBrick));
-    if (brick == NULL){
-        return NULL;
+void displayWall(struct Brick list[], int len, int column){
+    int i = 0;
+    while (i < len){
+        printf("X:%3d|Y:%3d     ", list[i].x, list[i].y);
+        i++;
+        if (i%column == 0){
+            printf("\n");
+        }
     }
-    brick -> x = x;
-    brick -> y = y;
-    brick -> width = w;
-    brick -> height = h;
+    printf("\n");
+}
+
+struct Brick initBrick(int x, int y, int w, int h){
+    struct Brick brick;
+    brick.x = x;
+    brick.y = y;
+    brick.width = w;
+    brick.height = h;
     return brick;
 }
 
-void remBrick(sBrick brick){
-    free(brick);
+void buildListBrick(struct Brick list[], int len, int x, int y, int column){
+    int curentX = x;
+    int curentY = y;
+    int i = 0;
+    while (i < len){
+        list[i] = initBrick(curentX, curentY, 10, 5);
+        i++;
+        curentX += 10;
+        if (i%column == 0){
+            curentY += 5;
+            curentX = x;
+        }
+    }
 }
+
+void addX(sBrick brick, int x){
+    brick -> x += x;
+}
+
+void addY(sBrick brick, int y){
+    brick -> y += y;
+}
+

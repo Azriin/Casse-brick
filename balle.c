@@ -1,16 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include "balle.h"
 
-
-struct Balle{
-    double x;
-    double y;
-    int radius;
-    int speed;
-    double degre;
-};
 
 void displayBalle(sBalle balle){
     printf("Balle info:\n");
@@ -21,22 +12,14 @@ void displayBalle(sBalle balle){
     printf("Degre  = %f\n", balle -> degre);
 }
 
-sBalle initBalle(double x, double y, int radius, int speed, double degre){
-    sBalle balle;
-    balle = malloc(sizeof(sBalle));
-    if (balle == NULL){
-        return NULL;
-    }
-    balle -> x = x;
-    balle -> y = y;
-    balle -> radius = radius;
-    balle -> speed = speed;
-    balle -> degre = degre;
+struct Balle initBalle(double x, double y, int radius, int speed, double degre){
+    struct Balle balle;
+    balle.x = x;
+    balle.y = y;
+    balle.radius = radius;
+    balle.speed = speed;
+    balle.degre = degre;
     return balle;
-}
-
-void remBalle(sBalle balle){
-    free(balle);
 }
 
 void addDegre(sBalle balle, double degre){
