@@ -1,24 +1,15 @@
 #include "brick.h"
 #include "balle.h"
 
-int main(void){
-  // Test init single brick
-  // struct Brick brick;
-  // brick = initBrick(10, 10, 10, 5);
-  // sBrick pBrick = &brick;
-  // displayBrick(pBrick);
-  
-  // Test init ball
-  // struct Balle balle;
-  // balle = initBalle(0, 0, 5, 10, 0);
-  // sBalle pBalle = &balle; 
-  // addDegre(pBalle, 0.26);
-  // move(pBalle);
-  // displayBalle(pBalle);
+#define NBBRICK 23
+#define COLUMN 5
 
-  // Test list of birck
-  struct Brick list[23];
-  buildListBrick(list, 23, 0, 0, 5);
-  displayWall(list, 23, 5);
+int main(void){
+  struct Brick list[NBBRICK];
+  int collideList[16][16];
+  buildListBrick(list, NBBRICK, 12, 12, COLUMN);
+  displayWall(list, NBBRICK, COLUMN);
+  buildCollideList(collideList, list, NBBRICK);
+  displayMatrice(collideList);
   return 0;
 }

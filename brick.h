@@ -1,6 +1,11 @@
 #ifndef BRICK_H
 #define BRICK_H
 
+#define W 8
+#define H 4
+#define LON 16
+#define LAR 16
+
 struct Brick{
     int x;
     int y;
@@ -11,10 +16,9 @@ typedef struct Brick * sBrick;
 
 void displayBrick(sBrick brick);
 void displayWall(struct Brick list[], int len, int column);
-struct Brick initBrick(int x, int y, int w, int h);
+void displayMatrice(int matrice[LAR][LON]);
+struct Brick initBrick(int x, int y, int width, int height);
 void buildListBrick(struct Brick list[], int len, int x, int y, int column);
-
-void addX(sBrick brick, int x);
-void addY(sBrick brick, int y);
+void buildCollideList(int collideList[LAR][LON], struct Brick lBrick[], int lenB);
 
 #endif //BRICK_H

@@ -7,26 +7,34 @@ void displayBalle(sBalle balle){
     printf("Balle info:\n");
     printf("X      = %f\n", balle -> x);
     printf("Y      = %f\n", balle -> y);
-    printf("Radius = %d\n", balle -> radius);
+    printf("Vx     = %f\n", balle -> vx);
+    printf("Vy     = %f\n", balle -> vy);
     printf("Speed  = %d\n", balle -> speed);
-    printf("Degre  = %f\n", balle -> degre);
+    printf("Radius = %d\n", balle -> radius);
 }
 
-struct Balle initBalle(double x, double y, int radius, int speed, double degre){
+struct Balle initBalle(double x, double y, double vx, double vy, int speed, int radius){
     struct Balle balle;
     balle.x = x;
     balle.y = y;
-    balle.radius = radius;
+    balle.vx = vx;
+    balle.vy = vy;
     balle.speed = speed;
-    balle.degre = degre;
+    balle.radius = radius;
     return balle;
 }
 
-void addDegre(sBalle balle, double degre){
-    balle -> degre += degre;
+double distance(int x, int y){
+    return sqrt(x*x+y*y);
+}
+
+void setVelocity(sBalle balle, int vecteurX, int vecteurY){
+    double dist = distance(vecteurX, vecteurY);
+    balle -> vx = vecteurX/dist;
+    balle -> vy = vecteurY/dist;
 }
 
 void move(sBalle balle){
-    balle -> x += cos(balle -> degre) * (balle -> speed);
-    balle -> y += sin(balle -> degre) * (balle -> speed);
+    balle -> x += (balle -> vx) * (balle -> speed);
+    balle -> y += (balle -> vy) * (balle -> speed);
 }

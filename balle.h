@@ -4,16 +4,18 @@
 struct Balle{
     double x;
     double y;
-    int radius;
+    double vx;
+    double vy;
     int speed;
-    double degre;
+    int radius;
 };
 typedef struct Balle * sBalle;
 
 void displayBalle(sBalle balle);
-struct Balle initBalle(double x, double y, int radius, int speed, double degre);
+struct Balle initBalle(double x, double y, double vx, double vy, int speed, int radius);
 
-void addDegre(sBalle balle, double degre);
+double distance(int x, int y);
+void setVelocity(sBalle balle, int vecteurX, int vecteurY);
 void move(sBalle balle);
 
 
