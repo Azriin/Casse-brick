@@ -21,7 +21,7 @@ void displayWall(struct Brick list[], int len, int column){
     printf("\n");
 }
 
-void displayMatrice(int matrice[LAR][LON]){
+void displayMatrice(unsigned char matrice[LAR][LON]){
     for (int i = 0; i < LAR; i ++){
         for (int j = 0; j < LON; j ++){
             printf("%d", matrice[i][j]);
@@ -67,8 +67,32 @@ void buildListBrick(struct Brick list[], int len, int x, int y, int column){
 // 0000711111187111111871111118711111180000
 // 0000000000000000000000000000000000000000
 
-void buildCollideList(int collideList[LAR][LON], struct Brick lBrick[], int lenB){
+static void addCollideBrick(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB){
     int x, y;
+    for (int i = 0; i < lenB; i ++){
+        x = (lBrick[i].x);
+        y = (lBrick[i].y);
+        for (int j = 0; j < H; j ++){
+            for (int k = 0; k < W; k ++){
+                if (j == 0){
+                    collideList[y+j][x+k] = 4;
+                } else if (j == H-1){
+                    collideList[y+j][x+k] = 1;
+                } else if (k == 0){
+                    collideList[y+j][x+k] = 3;
+                } else if (k == W-1) {
+                    collideList[y+j][x+k] = 2;
+                } 
+            }
+        }
+        collideList[y][x] = 5;
+        collideList[y][x+W-1] = 6;
+        collideList[y+H-1][x] = 7;
+        collideList[y+H-1][x+W-1] = 8;
+    }
+}
+
+void buildCollideList(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB){
     for (int i = 0; i < LAR; i ++){
         for (int j = 0; j < LON; j ++){
             if (i == 0){
@@ -82,11 +106,5 @@ void buildCollideList(int collideList[LAR][LON], struct Brick lBrick[], int lenB
             }
         }
     }
-    for (int i = 0; i < lenB; i ++){
-        x = (lBrick[i].x)/H;
-        y = (lBrick[i].y)/H;
-        for (int j = 0; j < W/H; j++){
-            collideList[y][x+j] = 4;
-        }
-    }
+    addCollideBrick(collideList, lBrick, lenB);
 }

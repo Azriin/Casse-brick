@@ -16,9 +16,9 @@ typedef struct Brick * sBrick;
 
 void displayBrick(sBrick brick);
 void displayWall(struct Brick list[], int len, int column);
-void displayMatrice(int matrice[LAR][LON]);
+void displayMatrice(unsigned char matrice[LAR][LON]);
 struct Brick initBrick(int x, int y, int width, int height);
 void buildListBrick(struct Brick list[], int len, int x, int y, int column);
-void buildCollideList(int collideList[LAR][LON], struct Brick lBrick[], int lenB);
+void buildCollideList(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB);
 
 #endif //BRICK_H
