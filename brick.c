@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include "constant.h"
 #include "brick.h"
+#include "chainLink.h"
+
 
 void displayBrick(sBrick brick){
     printf("Brick info:\n"); 
@@ -9,14 +12,16 @@ void displayBrick(sBrick brick){
     printf("Height = %d\n", brick -> height);
 }
 
-void displayWall(struct Brick list[], int len, int column){
-    int i = 0;
-    while (i < len){
-        printf("X:%3d|Y:%3d     ", list[i].x, list[i].y);
-        i++;
+void displayWall(struct ListLink * list, int column){
+    struct Link * link = list -> first;
+    int i;
+    while (link != NULL){
+        printf("X:%3d|Y:%3d     ", link -> brick.x, link -> brick.y);
         if (i%column == 0){
             printf("\n");
         }
+        link = link -> next;
+        i++;
     }
     printf("\n");
 }
@@ -31,20 +36,20 @@ void displayMatrice(unsigned char matrice[LAR][LON]){
 }
 
 struct Brick initBrick(int x, int y, int width, int height){
-    struct Brick brick;
-    brick.x = x;
-    brick.y = y;
-    brick.width = width;
-    brick.height = height;
+    struct Brick brick = {x, y, width, height};
     return brick;
 }
 
-void buildListBrick(struct Brick list[], int len, int x, int y, int column){
+int brickEqual(sBrick b1, sBrick b2){
+    return (b1 -> x == b2 -> x) && (b1 -> y == b2 -> y);
+}
+
+void buildListBrick(struct ListLink * list, int len, int x, int y, int column){
     int curentX = x;
     int curentY = y;
     int i = 0;
     while (i < len){
-        list[i] = initBrick(curentX, curentY, W, H);
+        addLink(list, initLink(curentX, curentY, W, H));
         i++;
         curentX += W;
         if (i%column == 0){
@@ -67,11 +72,13 @@ void buildListBrick(struct Brick list[], int len, int x, int y, int column){
 // 0000711111187111111871111118711111180000
 // 0000000000000000000000000000000000000000
 
-static void addCollideBrick(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB){
+static void addCollideBrick(unsigned char collideList[LAR][LON], struct ListLink * lBrick){
     int x, y;
-    for (int i = 0; i < lenB; i ++){
-        x = (lBrick[i].x);
-        y = (lBrick[i].y);
+    struct Link * current;
+    current = lBrick -> first;
+    while (current != NULL){
+        x = (current -> brick.x);
+        y = (current -> brick.y);
         for (int j = 0; j < H; j ++){
             for (int k = 0; k < W; k ++){
                 if (j == 0){
@@ -89,10 +96,11 @@ static void addCollideBrick(unsigned char collideList[LAR][LON], struct Brick lB
         collideList[y][x+W-1] = 6;
         collideList[y+H-1][x] = 7;
         collideList[y+H-1][x+W-1] = 8;
+        current = current -> next;
     }
 }
 
-void buildCollideList(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB){
+void buildCollideList(unsigned char collideList[LAR][LON], struct ListLink * lBrick, sBalle balle){
     for (int i = 0; i < LAR; i ++){
         for (int j = 0; j < LON; j ++){
             if (i == 0){
@@ -106,5 +114,19 @@ void buildCollideList(unsigned char collideList[LAR][LON], struct Brick lBrick[]
             }
         }
     }
-    addCollideBrick(collideList, lBrick, lenB);
+    addCollideBrick(collideList, lBrick);
+    collideList[(int)(balle -> y)][(int)(balle -> x)] = 9;
+}
+
+void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, int indice){
+    int x, y;
+    struct Link * link = findByIndice(list, indice);
+    x = link -> brick.x;
+    y = link -> brick.y;
+    for (int i = 0; i < H; i ++){
+        for (int j = 0; j < W; j ++){
+            collideList[y+i][x+j] = 0;                
+        }
+    }
+    remLink(list, link);
 }

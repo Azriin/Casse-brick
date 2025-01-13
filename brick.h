@@ -1,24 +1,14 @@
 #ifndef BRICK_H
 #define BRICK_H
 
-#define W 8
-#define H 4
-#define LON 16
-#define LAR 16
-
-struct Brick{
-    int x;
-    int y;
-    int width;
-    int height;
-};
-typedef struct Brick * sBrick;
-
-void displayBrick(sBrick brick);
-void displayWall(struct Brick list[], int len, int column);
+;void displayBrick(sBrick brick);
+void displayWall(struct ListLink * list, int column);
 void displayMatrice(unsigned char matrice[LAR][LON]);
 struct Brick initBrick(int x, int y, int width, int height);
-void buildListBrick(struct Brick list[], int len, int x, int y, int column);
-void buildCollideList(unsigned char collideList[LAR][LON], struct Brick lBrick[], int lenB);
+int brickEqual(sBrick b1, sBrick b2);
+void buildListBrick(struct ListLink * list, int len, int x, int y, int column);
+void buildCollideList(unsigned char collideList[LAR][LON], struct ListLink * lBrick, sBalle balle);
+
+void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, int indice);
 
 #endif //BRICK_H

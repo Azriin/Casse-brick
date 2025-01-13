@@ -4,7 +4,7 @@ CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
 LDLIBS = -lm
 RM = rm -f
 
-SRC = main.c brick.c balle.c
+SRC = main.c brick.c balle.c chainLink.c
 OBJ = $(SRC:.c=.o)
 DEPS = $(SRC:.c=.d)  # Fichiers de dépendances générés automatiquement
 EXE = main
