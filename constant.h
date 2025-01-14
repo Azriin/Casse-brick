@@ -1,7 +1,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define NBBRICK 6 //nb total of brick
+#define NBBRICK 1 //nb total of brick
 #define COLUMN 3 //nb brick per column
 
 #define W 8 //width of a brick

@@ -29,10 +29,15 @@ void displayWall(struct ListLink * list, int column){
 void displayMatrice(unsigned char matrice[LAR][LON]){
     for (int i = 0; i < LAR; i ++){
         for (int j = 0; j < LON; j ++){
-            printf("%d", matrice[i][j]);
+            if (matrice[i][j] != 0){
+                printf("%d", matrice[i][j]);
+            } else {
+                printf(" ");
+            }
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 struct Brick initBrick(int x, int y, int width, int height){
