@@ -14,6 +14,10 @@ struct Balle{
     double y;
     double vx;
     double vy;
+    double base;
+    double remainder;
+    double deviation;
+    unsigned char area;
 };
 typedef struct Balle * sBalle;
 
