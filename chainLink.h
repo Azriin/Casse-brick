@@ -7,6 +7,7 @@ void addLink(struct ListLink * list, struct Link * link);
 void freeLink(struct Link * link);
 void freeListLink(struct ListLink * list);
 void remLink(struct ListLink * list, struct Link * link);
-struct Link * findByIndice(struct ListLink * list, int indice);
+// struct Link * findByIndice(struct ListLink * list, int indice);
+struct Link * findByCoordinate(struct ListLink * list, double x, double y);
 
 #endif //CHAINLINK_H

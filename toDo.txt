@@ -1,10 +1,15 @@
 ajouter raquette dans matrice de jeu(2 briques)
 ajouter mouvement raquette
-ajouter deplacement balle
-/// ajouter colision balle et briques/raquette
 
 ajouter graphique
 ajouter menu
 ajouter game over
 
 ajouter bonus de mouvement a la balle quand raquette bouge
+
+====================
+    optimisation
+====================
+
+ecrire brique dans matrice avec 2 boucles non imbriquee
+suppresion brique apres contacte de la balle en un seul parcours 

@@ -5,7 +5,7 @@
 struct Balle initBalle(double x, double y, double vx, double vy);
 
 void setVelocity(sBalle balle, double vecteurX, double vecteurY);
-void collideBall(sBalle balle, unsigned char matrice[LAR][LON]);
-void move(sBalle balle, unsigned char matrice[LAR][LON]);
+void collideBall(sBalle balle, unsigned char matrice[LAR][LON], struct ListLink * list);
+void move(sBalle balle, unsigned char matrice[LAR][LON], struct ListLink * list);
 
 #endif //BALLE_H

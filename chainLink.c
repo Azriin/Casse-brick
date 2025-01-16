@@ -78,9 +78,25 @@ void remLink(struct ListLink * list, struct Link * link){
 struct Link * findByIndice(struct ListLink * list, int indice){
     struct Link * current;
     current = list -> first;
-    while (indice > 0){
+    while ((current != NULL) && (indice > 0)){
         current = current -> next;
         indice --;
+    }
+    return current;
+}
+
+static unsigned char predicateCoordinate(sBrick brick, double x, double y){
+    if ((brick -> x <= x && x <= brick -> x + W) &&
+        (brick -> y <= y && y <= brick -> y + H)){
+        return 1;
+    } return 0;
+}
+
+struct Link * findByCoordinate(struct ListLink * list, double x, double y){
+    struct Link * current;
+    current = list -> first;
+    while ((current != NULL) && (predicateCoordinate(&(current -> brick), x, y) == 0)){
+        current = current -> next;
     }
     return current;
 }

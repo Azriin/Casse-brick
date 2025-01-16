@@ -9,6 +9,6 @@ int brickEqual(sBrick b1, sBrick b2);
 void buildListBrick(struct ListLink * list, int len, int x, int y, int column);
 void buildCollideList(unsigned char collideList[LAR][LON], struct ListLink * lBrick, sBalle balle);
 
-void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, int indice);
+void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, sBalle balle);
 
 #endif //BRICK_H

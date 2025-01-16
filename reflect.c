@@ -33,3 +33,14 @@ void compute2DReflectedVectorRaw(float *orientation, float *direction, float *re
 	
 	compute2DReflectedVector(normedOr, normedDir, reflected);
 } // compute2DReflectedVectorRaw
+
+// simple2DReflect
+// orientation = vector wall, direction = vector input, reflected = vector output
+void simple2DReflect(float *orientation, float *direction, float *reflected){
+	if (orientation[0] != 0) {
+		reflected[0] = fabs(direction[0]) * orientation[0];
+	} else {reflected[0] = direction[0];}
+	if (orientation[1] != 0) {
+		reflected[1] = fabs(direction[1]) * orientation[1];
+	} else {reflected[1] = direction[1];}
+} // simple2DReflect
