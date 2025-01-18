@@ -12,16 +12,16 @@ void displayBrick(sBrick brick){
     printf("Height = %d\n", brick -> height);
 }
 
-void displayWall(struct ListLink * list, int column){
+void displayWall(struct ListLink * list){
     struct Link * link = list -> first;
-    int i;
+    int i = 0;
     while (link != NULL){
-        printf("X:%3d|Y:%3d     ", link -> brick.x, link -> brick.y);
-        if (i%column == 0){
-            printf("\n");
-        }
+        printf("i:%2d|X:%3d|Y:%3d     ", i, link -> brick.x, link -> brick.y);
         link = link -> next;
         i++;
+        if (i%COLUMN == 0){
+            printf("\n");
+        }
     }
     printf("\n");
 }
@@ -50,6 +50,36 @@ int brickEqual(sBrick b1, sBrick b2){
     return (b1 -> x == b2 -> x) && (b1 -> y == b2 -> y);
 }
 
+void brickMove(sBrick brick, unsigned char collideList[LAR][LON], int vx){
+    int x = brick -> x;
+    int y = brick -> y;
+    int w = brick -> width;
+    int h = brick -> height;
+    for (int i = 1; i < h; i ++){
+            collideList[y+i][x+vx] = 3;
+            collideList[y+i][x+vx+w-1] = 2;
+            collideList[y+i][x] = 0;
+            collideList[y+i][x+w-1] = 0;
+        }
+    if (vx > 0){
+        collideList[y][x] = 0;
+        collideList[y][x+w-1] = 4;
+        collideList[y+h-1][x] = 0;
+        collideList[y+h-1][x+w-1] = 1;
+    } else {
+        collideList[y][x] = 4;
+        collideList[y][x+w-1] = 0;
+        collideList[y+h-1][x] = 1;
+        collideList[y+h-1][x+w-1] = 0;
+    }
+    brick -> x += vx;
+    x += vx;
+    collideList[y][x] = 5;
+    collideList[y][x+w-1] = 6;
+    collideList[y+h-1][x] = 7;
+    collideList[y+h-1][x+w-1] = 8;
+}
+
 void buildListBrick(struct ListLink * list, int len, int x, int y, int column){
     int curentX = x;
     int curentY = y;
@@ -65,6 +95,21 @@ void buildListBrick(struct ListLink * list, int len, int x, int y, int column){
     }
 }
 
+void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, sBalle balle){
+    int x = balle -> x + balle -> vx;
+    int y = balle -> y + balle -> vy;
+    struct Link * link = findByCoordinate(list, x, y);
+    if (link != NULL){
+        x = link -> brick.x;
+        y = link -> brick.y;
+        for (int i = 0; i < link -> brick.height; i ++){
+            for (int j = 0; j < link -> brick.width; j ++){
+                collideList[y+i][x+j] = 0;                
+            }
+        }
+        remLink(list, link);
+    }
+}
 
 // collide with brick
 // 0000000000000000000000000000000000000000
@@ -78,32 +123,23 @@ void buildListBrick(struct ListLink * list, int len, int x, int y, int column){
 // 0000711111187111111871111118711111180000
 // 0000000000000000000000000000000000000000
 
-static void addCollideBrick(unsigned char collideList[LAR][LON], struct ListLink * lBrick){
-    int x, y;
-    struct Link * current;
-    current = lBrick -> first;
-    while (current != NULL){
-        x = (current -> brick.x);
-        y = (current -> brick.y);
-        for (int j = 0; j < H; j ++){
-            for (int k = 0; k < W; k ++){
-                if (j == 0){
-                    collideList[y+j][x+k] = 4;
-                } else if (j == H-1){
-                    collideList[y+j][x+k] = 1;
-                } else if (k == 0){
-                    collideList[y+j][x+k] = 3;
-                } else if (k == W-1) {
-                    collideList[y+j][x+k] = 2;
-                } 
-            }
-        }
-        collideList[y][x] = 5;
-        collideList[y][x+W-1] = 6;
-        collideList[y+H-1][x] = 7;
-        collideList[y+H-1][x+W-1] = 8;
-        current = current -> next;
+void addCollideBrick(unsigned char collideList[LAR][LON], sBrick brick){
+    int x = brick -> x;
+    int y = brick -> y;
+    int w = brick -> width;
+    int h = brick -> height;
+    for (int i = 1; i < w; i ++){
+        collideList[y][x+i] = 4;
+        collideList[y+h-1][x+i] = 1;
     }
+    for (int j = 1; j < h; j ++){
+        collideList[y+j][x] = 3;
+        collideList[y+j][x+w-1] = 2;
+    }
+    collideList[y][x] = 5;
+    collideList[y][x+w-1] = 6;
+    collideList[y+h-1][x] = 7;
+    collideList[y+h-1][x+w-1] = 8;
 }
 
 void buildCollideList(unsigned char collideList[LAR][LON], struct ListLink * lBrick, sBalle balle){
@@ -122,35 +158,10 @@ void buildCollideList(unsigned char collideList[LAR][LON], struct ListLink * lBr
     }
     collideList[0][0] = 8;
     collideList[0][LON-1] = 7;
-    addCollideBrick(collideList, lBrick);
-    collideList[(int)(balle -> y)][(int)(balle -> x)] = 9;
-}
-
-// void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, int indice){
-//     int x, y;
-//     struct Link * link = findByIndice(list, indice);
-//     x = link -> brick.x;
-//     y = link -> brick.y;
-//     for (int i = 0; i < H; i ++){
-//         for (int j = 0; j < W; j ++){
-//             collideList[y+i][x+j] = 0;                
-//         }
-//     }
-//     remLink(list, link);
-// }
-
-void delBrick(unsigned char collideList[LAR][LON], struct ListLink * list, sBalle balle){
-    int x = balle -> x + balle -> vx;
-    int y = balle -> y + balle -> vy;
-    struct Link * link = findByCoordinate(list, x, y);
-    if (link != NULL){
-        x = link -> brick.x;
-        y = link -> brick.y;
-        for (int i = 0; i < H; i ++){
-            for (int j = 0; j < W; j ++){
-                collideList[y+i][x+j] = 0;                
-            }
-        }
-        remLink(list, link);
+    struct Link * link = lBrick -> first;
+    while(link != NULL){
+        addCollideBrick(collideList, &(link -> brick));
+        link = link -> next;
     }
+    collideList[(int)(balle -> y)][(int)(balle -> x)] = 9;
 }
