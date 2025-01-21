@@ -1,7 +1,7 @@
 # Variables
 CC = gcc
-CFLAGS = -std=c11 -Wpedantic -Wall -Wextra
-LDLIBS = -lm
+CFLAGS = -std=c11 -Wpedantic -Wall -Wextra $(shell sdl2-config --cflags)
+LDLIBS = -lm $(shell sdl2-config --libs)
 RM = rm -f
 
 SRC = main.c brick.c balle.c chainLink.c reflect.c
@@ -14,7 +14,7 @@ all: $(EXE)
 
 # Compilation de l'exécutable
 $(EXE): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS) $(SDL)
 
 # Compilation des fichiers objets
 %.o: %.c
