@@ -1,13 +1,14 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define NBBRICK 6 //nb total of brick
-#define COLUMN 3 //nb brick per column
+#define NBBRICK 63 //nb total of brick
+#define COLUMN 9 //nb brick per column
 
 #define W 8 //width of a brick
 #define H 4 //height of a brick
-#define LON 32 //width of the screen
-#define LAR 16 //height of the screen
+#define LON 80 //width of the screen
+#define LAR 60 //height of the screen
+#define SCALE 8 //size of picture
 
 struct Balle{
     double x;

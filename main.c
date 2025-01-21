@@ -51,7 +51,7 @@ void SDL_LimitFPS(unsigned int limit){
 void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned char collideList[LAR][LON]){
   SDL_Texture * texture;
   SDL_Surface * image[10];
-  // image[0] = SDL_LoadBMP("./images/void.bmp");
+  image[0] = SDL_LoadBMP("./images/void.bmp");
   image[1] = SDL_LoadBMP("./images/brique1.bmp");
   image[2] = SDL_LoadBMP("./images/brique2.bmp");
   image[3] = SDL_LoadBMP("./images/brique3.bmp");
@@ -61,7 +61,7 @@ void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned c
   image[7] = SDL_LoadBMP("./images/brique7.bmp");
   image[8] = SDL_LoadBMP("./images/brique8.bmp");
   image[9] = SDL_LoadBMP("./images/balle.bmp");
-  for (int i = 1; i < 10; i++){
+  for (int i = 0; i < 10; i++){
     if (image[i] == NULL){
       SDL_ExitWithError("image", window, renderer);
     }
@@ -77,8 +77,8 @@ void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned c
         if (collideList[i][j] == h){
           if (SDL_QueryTexture(texture, NULL, NULL, &rectangle.w, &rectangle.h) != 0) //charge l'image en memoire
             SDL_ExitWithError("cahrger la texture", window, renderer);
-          rectangle.x = j*4; 
-          rectangle.y = i*4;
+          rectangle.x = j*SCALE; 
+          rectangle.y = i*SCALE;
       
           if (SDL_RenderCopy(renderer, texture, NULL, &rectangle) != 0)
             SDL_ExitWithError("affichage texture", window, renderer);
@@ -137,7 +137,7 @@ int main(void){
   unsigned int frame_limit = 0;
   if (SDL_Init(SDL_INIT_VIDEO) != 0)
     SDL_ExitWithError("init", NULL, NULL);
-  if (SDL_CreateWindowAndRenderer(LON*4, LAR*4, 0, &window, &renderer) != 0)
+  if (SDL_CreateWindowAndRenderer(LON*SCALE, LAR*SCALE, 0, &window, &renderer) != 0)
     SDL_ExitWithError("fenetre et render", NULL, NULL);
   SDL_DisplayTexture(window, renderer, collideList);
   //coeur du jeu graphique
