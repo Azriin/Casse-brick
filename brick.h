@@ -1,7 +1,7 @@
 #ifndef BRICK_H
 #define BRICK_H
 
-;void displayBrick(sBrick brick);
+void displayBrick(sBrick brick);
 void displayWall(struct ListLink * list);
 void displayMatrice(unsigned char matrice[LAR][LON]);
 

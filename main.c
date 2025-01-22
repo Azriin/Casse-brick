@@ -4,7 +4,7 @@
 #include "balle.h"
 #include "chainLink.h"
 
-#define FPS_LIMIT 1000/30
+#define FPS_LIMIT 1000/50
 //Casse brique version ascci
 int iMoveRacket(int i, int period){
   if (i % period > period/2){
@@ -48,8 +48,7 @@ void SDL_LimitFPS(unsigned int limit){
     SDL_Delay(limit - ticks);
 }
 
-void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned char collideList[LAR][LON]){
-  SDL_Texture * texture;
+void SDL_LoadTexture(SDL_Window * window, SDL_Renderer * renderer, SDL_Texture * textures[]){
   SDL_Surface * image[10];
   image[0] = SDL_LoadBMP("./images/void.bmp");
   image[1] = SDL_LoadBMP("./images/brique1.bmp");
@@ -65,55 +64,56 @@ void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned c
     if (image[i] == NULL){
       SDL_ExitWithError("image", window, renderer);
     }
-  }
-  SDL_Rect rectangle;
-  for (int h = 1; h < 10; h++){
-    texture = SDL_CreateTextureFromSurface(renderer, image[h]); //cree la texture avec l'image
-    SDL_FreeSurface(image[h]);
-    if (texture == NULL)
-      SDL_ExitWithError("texture", window, renderer);
-    for (int i = 0; i < LAR; i++){
-      for (int j = 0; j < LON; j++){
-        if (collideList[i][j] == h){
-          if (SDL_QueryTexture(texture, NULL, NULL, &rectangle.w, &rectangle.h) != 0) //charge l'image en memoire
-            SDL_ExitWithError("cahrger la texture", window, renderer);
-          rectangle.x = j*SCALE; 
-          rectangle.y = i*SCALE;
-      
-          if (SDL_RenderCopy(renderer, texture, NULL, &rectangle) != 0)
-            SDL_ExitWithError("affichage texture", window, renderer);
-        }
+    textures[i] = SDL_CreateTextureFromSurface(renderer, image[i]); //cree la texture avec l'image
+    SDL_FreeSurface(image[i]);
+    if (textures[i] == NULL){
+      for (int j = i+1; j < 10; j++){
+        SDL_FreeSurface(image[j]);
       }
+      SDL_ExitWithError("texture", window, renderer);
     }
   }
-  
+}
+
+void SDL_DisplayTexture(SDL_Window * window, SDL_Renderer * renderer, unsigned char collideList[LAR][LON], SDL_Texture * textures[]){
+  SDL_Rect rectangle;
+  for (int i = 0; i < LAR; i++){
+    for (int j = 0; j < LON; j++){
+      if (SDL_QueryTexture(textures[collideList[i][j]], NULL, NULL, &rectangle.w, &rectangle.h) != 0)
+        SDL_ExitWithError("cahrger la texture", window, renderer);
+      rectangle.x = j*SCALE; 
+      rectangle.y = i*SCALE;
+      if (SDL_RenderCopy(renderer, textures[collideList[i][j]], NULL, &rectangle) != 0)
+        SDL_ExitWithError("affichage texture", window, renderer);
+    }
+  }
   SDL_RenderPresent(renderer); //affiche la texture    
 }
 
-SDL_bool SDL_CoreLoop(void){
+SDL_bool SDL_CoreLoop(unsigned char collideList[LAR][LON], sBrick raquette){
   SDL_bool program_lunched = SDL_TRUE;
   SDL_Event event;
-  while(SDL_PollEvent(&event)){//lit tout les event sans bloquer le programme
+  while(SDL_PollEvent(&event)){
     switch (event.type){
-      case SDL_QUIT: //si tu appuis sur la crois pour fermer
+      case SDL_QUIT:
         program_lunched = SDL_FALSE;
         break;
       case SDL_KEYDOWN:
         switch(event.key.keysym.sym){
+          case SDLK_RIGHT:
+            brickMove(raquette, collideList, 1);
+            continue;
+          case SDLK_LEFT:
+            brickMove(raquette, collideList, -1);
+            continue;
+          case SDLK_RETURN:
+            continue;
+          case SDLK_ESCAPE:
+            program_lunched = SDL_FALSE;
+            break;
           default:
             continue;
-          case SDLK_b:
-            printf("hello wrold!\n");
-            continue;
         }
-      case SDL_MOUSEMOTION:
-        printf("%d / %d \n", event.motion.x, event.motion.y); // affiche les coo de la souris
-        break;
-      case SDL_MOUSEBUTTONDOWN:
-        printf("clic en %d / %d \n", event.button.x, event.button.y); // affiche les coo du clic de la souris
-        if (event.button.clicks >= 2)
-          printf("double clic\n");    
-        break;
       default:
         break;
     }
@@ -121,36 +121,44 @@ SDL_bool SDL_CoreLoop(void){
   return program_lunched;
 }
 
-int main(void){
-  //variable jeu
-  unsigned char collideList[LAR][LON];
-  struct ListLink * list = initListLink();
-  struct Balle balle = initBalle(2, 1, 1, 1);
-  struct Brick raquette = initBrick(4, 13, 12, 3);
-  buildListBrick(list, NBBRICK, 4, 3, COLUMN);
-  buildCollideList(collideList, list, &balle);
-  addCollideBrick(collideList, &raquette);
-  //variable graphique
+void casseBriqueGraphique(struct ListLink * list, sBalle balle, unsigned char collideList[LAR][LON], sBrick raquette){
   SDL_Window * window;
   SDL_Renderer * renderer;
   SDL_bool program_lunched = SDL_TRUE;
+  SDL_Texture * textures[10];
   unsigned int frame_limit = 0;
   if (SDL_Init(SDL_INIT_VIDEO) != 0)
     SDL_ExitWithError("init", NULL, NULL);
   if (SDL_CreateWindowAndRenderer(LON*SCALE, LAR*SCALE, 0, &window, &renderer) != 0)
     SDL_ExitWithError("fenetre et render", NULL, NULL);
-  SDL_DisplayTexture(window, renderer, collideList);
+  SDL_LoadTexture(window, renderer, textures);
   //coeur du jeu graphique
-  while (program_lunched){
+  while (program_lunched && balle -> y < LAR-1 && list -> len > 0){
     frame_limit = SDL_GetTicks() + FPS_LIMIT;
+    move(balle, collideList, list);
+    program_lunched = SDL_CoreLoop(collideList, raquette);
+    SDL_DisplayTexture(window, renderer, collideList, textures);
     SDL_LimitFPS(frame_limit);
-    program_lunched = SDL_CoreLoop();
     frame_limit = SDL_GetTicks() + FPS_LIMIT;
   }
-  // casseBriqueAscci(list, &balle, collideList, &raquette);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+}
+
+int main(void){
+  //variable jeu
+  unsigned char collideList[LAR][LON];
+  struct ListLink * list = initListLink();
+  struct Balle balle = initBalle((LON-1)/2, 50, -1, -1);
+  struct Brick raquette = initBrick((LON-2)/2, 55, 2*W, H);
+  buildListBrick(list, NBBRICK, 4, 4, COLUMN);
+  buildCollideList(collideList, list, &balle);
+  addCollideBrick(collideList, &raquette);
+  
+  casseBriqueGraphique(list, &balle, collideList, &raquette);
+  // casseBriqueAscci(list, &balle, collideList, &raquette);
+  
   freeListLink(list);
   return 0;
 }

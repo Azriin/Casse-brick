@@ -39,6 +39,6 @@ struct ListLink{
     int len;
     struct Link * first;
     struct Link * last;
-}
+};
 
 #endif //CONSTANT_H

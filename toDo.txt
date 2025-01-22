@@ -1,18 +1,12 @@
-ajouter graphique
 ajouter menu
 ajouter game over
-
+refaire l'affichage
 ajouter bonus de mouvement a la balle quand raquette bouge
 implementer mouvement raquette != +/-1
+ajouter collision raquette et murs
 
 ============
-    fixe
+    Bugs
 ============
 
 fixe mouvement balle
-
-====================
-    optimisation
-====================
-
-suppresion brique apres contacte de la balle en un seul parcours 
